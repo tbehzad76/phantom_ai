@@ -24,7 +24,7 @@ WorkingDirectory=/root/tradingBot
 ExecStart=/usr/bin/python3 /root/tradingBot/Phantom_AI.py
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
-Restart=on-failure
+Restart=always
 RestartSec=42s
 [Install]
 WantedBy=multi-user.target
