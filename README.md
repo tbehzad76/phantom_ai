@@ -21,7 +21,7 @@ User=root
 Type=simple
 Environment=PYTHONUNBUFFERED=1
 WorkingDirectory=/root/tradingBot
-ExecStart=/usr/bin/python3 /root/tradingBot/run.py
+ExecStart=/usr/bin/python3 /root/tradingBot/Phantom_AI.py
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 Restart=on-failure
