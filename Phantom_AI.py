@@ -6,7 +6,6 @@ import os
 from datetime import datetime
 import pytz
 
-os.remove("/tmp/tradingBot/phantom_ai.log")
 os.makedirs("/tmp/tradingBot/", exist_ok=True)
 
 
@@ -14,8 +13,9 @@ def log(msg):
     tehran_tz = pytz.timezone("Asia/Tehran")
     datetime_in_tehran = datetime.now(tehran_tz)
     t = datetime_in_tehran.strftime("%Y/%m/%d %H:%M:%S")
+    d = datetime_in_tehran.strftime("%Y-%m-%d")
     log_msg = str(msg)
-    with open("/tmp/tradingBot/phantom_ai.log", 'a+') as file:
+    with open(f"/tmp/tradingBot/phantom_ai-{d}.log", 'a+') as file:
         file.write(f'{t}    {log_msg}' + "\n")
 
 
@@ -94,29 +94,32 @@ def add_order(symbol, position, side):
 
 
 async def main():
-    os.system('cls' if os.name == 'nt' else 'clear')
-    while True:
-        amount = calc_amount(trade_symbol)
-        if amount != 0:
-            positions = bingx.fetch_positions(symbols=[config.SYMBOL], params={})
-            if positions:
-                for position in positions:
-                    position_amount = position['notional']
-                    if position['info']['positionSide'] == 'LONG':
-                        tp = take_profit(position, trade_symbol, 'LONG', amount, position_amount)
-                        add_order(trade_symbol, position, 'buy')
-                        log(f'LONG:{tp}')
-                    else:
-                        tp = take_profit(position, trade_symbol, 'SHORT', amount, position_amount)
-                        add_order(trade_symbol, position, 'sell')
-                        log(f'SHORT:{tp}')
+    try:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        while True:
+            amount = calc_amount(trade_symbol)
+            if amount != 0:
+                positions = bingx.fetch_positions(symbols=[config.SYMBOL], params={})
+                if positions:
+                    for position in positions:
+                        position_amount = position['notional']
+                        if position['info']['positionSide'] == 'LONG':
+                            tp = take_profit(position, trade_symbol, 'LONG', amount, position_amount)
+                            add_order(trade_symbol, position, 'buy')
+                            log(f'LONG:{tp}')
+                        else:
+                            tp = take_profit(position, trade_symbol, 'SHORT', amount, position_amount)
+                            add_order(trade_symbol, position, 'sell')
+                            log(f'SHORT:{tp}')
+                else:
+                    open_order(trade_symbol, amount, 'buy')
+                    open_order(trade_symbol, amount, 'sell')
             else:
-                open_order(trade_symbol, amount, 'buy')
-                open_order(trade_symbol, amount, 'sell')
-        else:
-            log('Amount is zero')
-            break
-        await asyncio.sleep(1)
+                log('Amount is zero')
+                break
+            await asyncio.sleep(1)
+    except Exception as e:
+        log(f'Error: {e}')
 
 
 loop = asyncio.get_event_loop()
