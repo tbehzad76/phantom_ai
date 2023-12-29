@@ -6,7 +6,6 @@ import os
 from datetime import datetime
 import pytz
 
-os.remove("/tmp/tradingBot/phantom_ai.log")
 os.makedirs("/tmp/tradingBot/", exist_ok=True)
 
 
@@ -14,8 +13,9 @@ def log(msg):
     tehran_tz = pytz.timezone("Asia/Tehran")
     datetime_in_tehran = datetime.now(tehran_tz)
     t = datetime_in_tehran.strftime("%Y/%m/%d %H:%M:%S")
+    d = datetime_in_tehran.strftime("%Y-%m-%d")
     log_msg = str(msg)
-    with open("/tmp/tradingBot/phantom_ai.log", 'a+') as file:
+    with open(f"/tmp/tradingBot/phantom_ai-{d}.log", 'a+') as file:
         file.write(f'{t}    {log_msg}' + "\n")
 
 
