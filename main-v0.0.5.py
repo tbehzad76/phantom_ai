@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 import pytz
 
+os.remove("/tmp/tradingBot/phantom_ai.log")
 os.makedirs("/tmp/tradingBot/", exist_ok=True)
 
 
