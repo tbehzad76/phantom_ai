@@ -95,7 +95,6 @@ def add_order(symbol, position, side):
 
 async def main():
     try:
-        os.system('cls' if os.name == 'nt' else 'clear')
         while True:
             amount = calc_amount(trade_symbol)
             if amount != 0:
