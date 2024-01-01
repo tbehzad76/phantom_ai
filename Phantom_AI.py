@@ -37,15 +37,8 @@ def get_market_price(symbol):
     return market_price
 
 
-def calc_amount(symbol):
-    market_price = get_market_price(symbol)
-    balance = fetch_balance()
-    if balance > 0:
-        size = balance * 0.5 / 100
-        amount = size / market_price
-    else:
-        amount = 0
-    return 22
+def calc_amount():
+    return config.FIRST_POSITION_AMOUNT
 
 
 def fetch_balance():
@@ -96,7 +89,7 @@ def add_order(symbol, position, side):
 async def main():
     try:
         while True:
-            amount = calc_amount(trade_symbol)
+            amount = calc_amount()
             if amount != 0:
                 positions = bingx.fetch_positions(symbols=[config.SYMBOL], params={})
                 if positions:
