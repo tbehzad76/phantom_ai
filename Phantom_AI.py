@@ -73,7 +73,7 @@ def open_order(symbol, amount, side):
 
 
 def add_order(symbol, position, side):
-    amount = (position['notional'] * 4) - position['notional']
+    amount = (position['notional'] * 4) + calc_amount() - position['notional']
     market_price = get_market_price(symbol)
     percentage = {}
     if side == 'buy':
