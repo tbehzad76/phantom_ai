@@ -51,7 +51,9 @@ sudo systemctl enable phantom_ai.service
 ```
 sudo systemctl disable phantom_ai.service
 ```
-
-
+8-add service to crontab for restart service every 15min in crontab -e
+```
+*/15 * * * * /usr/bin/systemctl restart phantom_ai.service
+```
 
     
