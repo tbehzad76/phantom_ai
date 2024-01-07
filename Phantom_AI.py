@@ -60,12 +60,18 @@ def take_profit(position, symbol, side, amount, position_amount):
     if side == 'LONG':
         if percentage['LONG'] >= config.TAKE_PROFIT:
             bingx.create_market_order(symbol=symbol, side='sell', amount=position_amount, params={'reduceOnly': True})
-            open_order(symbol, amount, 'buy')
+            if config.OFF != 1:
+                open_order(symbol, amount, 'buy')
+            else:
+                log(f'LONG position of {config.SYMBOL} off')
         return percentage['LONG']
     else:
         if percentage['SHORT'] >= config.TAKE_PROFIT:
             bingx.create_market_order(symbol=symbol, side='buy', amount=position_amount, params={'reduceOnly': True})
-            open_order(symbol, amount, 'sell')
+            if config.OFF != 1:
+                open_order(symbol, amount, 'sell')
+            else:
+                log(f'SHORT position of {config.SYMBOL} off')
         return percentage['SHORT']
 
 
@@ -106,8 +112,9 @@ async def main():
                             add_order(trade_symbol, position, 'sell')
                             log(f'SHORT:{tp}')
                 else:
-                    open_order(trade_symbol, amount, 'buy')
-                    open_order(trade_symbol, amount, 'sell')
+                    if config.OFF != 1:
+                        open_order(trade_symbol, amount, 'buy')
+                        open_order(trade_symbol, amount, 'sell')
             else:
                 log('Amount is zero')
                 break
