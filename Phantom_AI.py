@@ -33,17 +33,18 @@ bingx.set_leverage(leverage=leverage, symbol=trade_symbol, params={"marginMode":
 
 
 def increase(position):
-    amount = (position['notional'] * config.INCREASE_FACTOR) + calc_amount() - position['notional']
-    amount = math.floor(amount + (amount * (-0.15)))
+    # amount = (position['notional'] * config.INCREASE_FACTOR) + calc_amount() - position['notional']
+    # amount = math.floor(amount + (amount * (-0.15)))
+    amount = position['notional'] * 3
     return amount
 
 
 def force_tp(amount):
     count = 0
-    while amount >= config.FIRST_POSITION_AMOUNT:
-        amount = amount / 4
+    while amount > config.FIRST_POSITION_AMOUNT:
+        amount = amount / config.INCREASE_FACTOR
         count += 1
-    if count >= 4:
+    if count >= config.FORCE_TAKE_PROFIT_COUNT:
         return True
     else:
         return False
@@ -75,9 +76,10 @@ def take_profit(position, symbol, side, amount, position_amount):
         'SHORT': ((float(position['info']['avgPrice']) * 100 / float(market_price)) - 100) * leverage
     }
     if side == 'LONG':
-        if force_tp(position['notional']):
+        if force_tp(position_amount):
             if percentage['LONG'] >= config.FORCE_TAKE_PROFIT:
-                bingx.create_market_order(symbol=symbol, side='sell', amount=position_amount, params={'reduceOnly': True})
+                bingx.create_market_order(symbol=symbol, side='sell', amount=position_amount,
+                                          params={'reduceOnly': True})
                 if config.OFF != 1:
                     open_order(symbol, amount, 'buy')
                 else:
@@ -85,16 +87,18 @@ def take_profit(position, symbol, side, amount, position_amount):
             return percentage['LONG']
         else:
             if percentage['LONG'] >= config.TAKE_PROFIT:
-                bingx.create_market_order(symbol=symbol, side='sell', amount=position_amount, params={'reduceOnly': True})
+                bingx.create_market_order(symbol=symbol, side='sell', amount=position_amount,
+                                          params={'reduceOnly': True})
                 if config.OFF != 1:
                     open_order(symbol, amount, 'buy')
                 else:
                     log(f'LONG position of {config.SYMBOL} off')
             return percentage['LONG']
     else:
-        if force_tp(position['notional']):
+        if force_tp(position_amount):
             if percentage['SHORT'] >= config.FORCE_TAKE_PROFIT:
-                bingx.create_market_order(symbol=symbol, side='buy', amount=position_amount, params={'reduceOnly': True})
+                bingx.create_market_order(symbol=symbol, side='buy', amount=position_amount,
+                                          params={'reduceOnly': True})
                 if config.OFF != 1:
                     open_order(symbol, amount, 'sell')
                 else:
@@ -102,7 +106,8 @@ def take_profit(position, symbol, side, amount, position_amount):
             return percentage['SHORT']
         else:
             if percentage['SHORT'] >= config.TAKE_PROFIT:
-                bingx.create_market_order(symbol=symbol, side='buy', amount=position_amount, params={'reduceOnly': True})
+                bingx.create_market_order(symbol=symbol, side='buy', amount=position_amount,
+                                          params={'reduceOnly': True})
                 if config.OFF != 1:
                     open_order(symbol, amount, 'sell')
                 else:
