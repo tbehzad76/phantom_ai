@@ -145,11 +145,11 @@ async def main():
                         if position['info']['positionSide'] == 'LONG':
                             tp = take_profit(position, trade_symbol, 'LONG', amount, position_amount)
                             add_order(trade_symbol, position, 'buy')
-                            log(f'LONG:{tp}')
+                            log(f'LONG:{round(tp, 2)}')
                         else:
                             tp = take_profit(position, trade_symbol, 'SHORT', amount, position_amount)
                             add_order(trade_symbol, position, 'sell')
-                            log(f'SHORT:{tp}')
+                            log(f'SHORT:{round(tp, 2)}')
                 else:
                     if config.OFF != 1:
                         open_order(trade_symbol, amount, 'buy')
