@@ -5,9 +5,7 @@ import asyncio
 import os
 from datetime import datetime
 import pytz
-import math  # for round
 import subprocess
-
 
 os.makedirs("/tmp/tradingBot/", exist_ok=True)
 
@@ -162,8 +160,7 @@ async def main():
             await asyncio.sleep(1)
     except Exception as e:
         log(f'Error: {e}')
-        subprocess.check_call("sudo /usr/bin/systemctl restart phantom_ai.service".split())
-
+        subprocess.check_call("sudo systemctl restart phantom_ai.service".split())
 
 
 loop = asyncio.get_event_loop()
